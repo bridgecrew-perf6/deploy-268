@@ -1,8 +1,10 @@
-beta.thankyoudiscord.com {
+:80 {
   route /api/* {
     uri strip_prefix /api
     reverse_proxy http://api:3000
   }
 
-  reverse_proxy http://web:3000
+  route {
+    reverse_proxy http://web:3000
+  }
 }
