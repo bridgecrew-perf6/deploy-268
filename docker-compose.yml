@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+  api:
+    image: 'tyd-api'
+    depends_on:
+      - 'redis'
+      - 'postgres'
+      - 'imagegen'
+    volumes:
+      - './api.env:/.env'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+
+  imagegen:
+    image: 'tyd-imagegen'
+    depends_on:
+      - 'postgres'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+    volumes:
+      - './imagegen.env:/usr/src/app/.env'
+
+  web:
+    image: 'tyd-web'
+    depends_on:
+      - 'api'
+      - 'caddy'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+
+  postgres:
+    command: 'postgres -c listen_addresses="*"'
+    image: 'postgres:14'
+    environment:
+      POSTGRES_USER: 'thankyoudiscord'
+      POSTGRES_PASSWORD: 'thankyoudiscord'
+      POSTGRES_DB: 'thankyoudiscord'
+    volumes:
+      - 'postgres_data:/var/lib/postgres/data'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+
+  caddy:
+    image: 'caddy'
+    volumes:
+      - './Caddyfile:/etc/caddy/Caddyfile'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+
+  redis:
+    image: 'redis'
+    volumes:
+      - 'redis_data:/data'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+
+volumes:
+  postgres_data:
+  redis_data:
