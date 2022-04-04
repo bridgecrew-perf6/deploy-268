@@ -32,6 +32,16 @@ services:
       restart_policy:
         condition: 'on-failure'
 
+  bot:
+    image: 'tyd-bot'
+    depends_on:
+      - 'postgres'
+    deploy:
+      restart_policy:
+        condition: 'on-failure'
+    volumes:
+      - './bot.env:/usr/src/app/.env'
+
   postgres:
     command: 'postgres -c listen_addresses="*"'
     image: 'postgres:14'
