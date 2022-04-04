@@ -22,6 +22,8 @@ services:
         condition: 'on-failure'
     volumes:
       - './imagegen.env:/usr/src/app/.env'
+      - './services/imagegen/template.ejs:/usr/src/app/template.ejs'
+      - './services/imagegen/assets:/usr/src/app/assets'
 
   web:
     image: 'tyd-web'
